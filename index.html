@@ -3,50 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticky Navbar</title>
+    <title>Bold and Light Poppins</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;900&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            padding: 50px;
         }
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 15px 20px;
-            background-color: black;
-            color: white;
-            transition: background-color 0.3s, color 0.3s;
+        h1 {
+            font-weight: 900;
+            font-size: 48px;
+            margin-bottom: 10px;
         }
-
-        .navbar.scrolled {
-            background-color: white;
-            color: black;
-        }
-
-        .content {
-            padding-top: 60px;
-            height: 200vh;
-
+        p {
+            font-weight: 300;
+            font-size: 24px;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="navbar" id="navbar">B</div>
-    <div class="content">
-        <h3>Scroll down to see the effect</h3>
-    </div>
-
-    <script>
-        window.addEventListener("scroll", function() {
-            var navbar = document.getElementById("navbar");
-            if (window.scrollY > 50) {
-                navbar.classList.add("scrolled");
-            } else {
-                navbar.classList.remove("scrolled");
-            }
-        });
-    </script>
+    <h1>NATHAN PULS</h1>
+    <p>Coming soon</p>
 </body>
 </html>
