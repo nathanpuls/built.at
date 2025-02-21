@@ -1,1 +1,25 @@
-blog
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Blog</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div id="content">Loading...</div>
+
+    <script>
+        async function loadMarkdown() {
+            const response = await fetch('blog.md');
+            const text = await response.text();
+            document.getElementById('content').innerHTML = marked.parse(text);
+        }
+        loadMarkdown();
+    </script>
+</body>
+</html>
