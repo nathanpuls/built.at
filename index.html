@@ -23,6 +23,8 @@
         .post-title {
             font-size: 1.5em;
             font-weight: 600;
+            display: block;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -33,20 +35,25 @@
     <h1>My Blog</h1>
     <div id="posts"></div>
     <script>
-        async function loadPosts() {
-            const response = await fetch('posts.json');
-            const posts = await response.json();
+        async function loadMarkdownFiles() {
+            const response = await fetch('posts/');
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const links = doc.querySelectorAll('a');
             const container = document.getElementById('posts');
-            posts.forEach(post => {
-                const link = document.createElement('a');
-                link.href = post.file;
-                link.className = 'post-title';
-                link.textContent = post.title;
-                container.appendChild(link);
-                container.appendChild(document.createElement('br'));
+
+            links.forEach(link => {
+                if (link.href.endsWith('.md')) {
+                    const postLink = document.createElement('a');
+                    postLink.href = link.href;
+                    postLink.className = 'post-title';
+                    postLink.textContent = link.href.split('/').pop().replace('.md', '');
+                    container.appendChild(postLink);
+                }
             });
         }
-        loadPosts();
+        loadMarkdownFiles();
     </script>
 </body>
 </html>
