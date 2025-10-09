@@ -37,12 +37,12 @@
       font-size: 1rem;
       border: none;
       border-radius: 0.5rem;
-      background-color: gray;
+      background-color: #4a4a4a;
       color: white;
       cursor: pointer;
     }
     button:hover {
-      background-color: #1e40af;
+      background-color: #4a4a4a;
     }
     #message {
       margin-top: 1.5rem;
@@ -67,7 +67,7 @@
     }
     #homepage-section button {
       margin-top: 1rem;
-      background-color: #2563eb;
+      background-color: #4a4a4a;
     }
   </style>
 </head>
@@ -75,12 +75,12 @@
   <h1>built.at</h1>
 
   <div>
-    <input type="text" id="domainInput" placeholder="Enter domain" autofocus />
+    <input type="text" id="domainInput" placeholder="Enter a domain" autofocus />
     <button onclick="searchDomain()">Search</button>
   </div>
 
   <div id="domain"></div>
-  <div id="message">Enter a domain and click Search.</div>
+  <div id="message"></div>
 
   <!-- Homepage only section -->
   <div id="homepage-section" style="display:none;">
