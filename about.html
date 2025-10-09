@@ -34,13 +34,13 @@
       padding: 0.55rem 1rem;
       font-size: 1rem;
       border-radius: 0.5rem;
-      background-color: #2563eb;
+      background-color: #a4a4a4;
       color: white;
       text-decoration: none;
       cursor: pointer;
     }
     a.button:hover {
-      background-color: #1e40af;
+      background-color: #a4a4a4;
     }
   </style>
 </head>
@@ -55,6 +55,10 @@
   <p>
     Our goal is to provide a lightweight, trustable way for domains to communicate short messages without needing a hosting service or database.  
     Anyone can view these messages by visiting built.at/[your-domain].
+  </p>
+
+  <p>
+  To publish a verified message from your domain, go to your DNS settings, add a TXT record with @ as the host, and enter built.at=YOUR MESSAGE HERE as the value.
   </p>
 
   <a class="button" href="/">← Back to Home</a>
