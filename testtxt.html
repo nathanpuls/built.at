@@ -37,7 +37,7 @@
       font-size: 1rem;
       border: none;
       border-radius: 0.5rem;
-      background-color: #2563eb;
+      background-color: gray;
       color: white;
       cursor: pointer;
     }
@@ -58,18 +58,35 @@
       font-weight: bold;
       font-size: 1.2rem;
     }
+    #homepage-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #e5e7eb;
+      border-radius: 0.75rem;
+      max-width: 400px;
+    }
+    #homepage-section button {
+      margin-top: 1rem;
+      background-color: #2563eb;
+    }
   </style>
 </head>
 <body>
   <h1>built.at</h1>
 
   <div>
-    <input type="text" id="domainInput" placeholder="Enter domain (e.g., wyr.es)" />
+    <input type="text" id="domainInput" placeholder="Enter domain" />
     <button onclick="searchDomain()">Search</button>
   </div>
 
   <div id="domain"></div>
   <div id="message">Enter a domain and click Search.</div>
+
+  <!-- Homepage only section -->
+  <div id="homepage-section" style="display:none;">
+    <p>Welcome to built.at! Easily find the messages associated with any domain.</p>
+    <button onclick="alert('Button clicked!')">Learn More</button>
+  </div>
 
   <script>
     async function fetchDomainMessage(domain) {
@@ -90,7 +107,7 @@
         if (messages.length > 0) {
           document.getElementById('message').innerHTML = messages.join('<br>');
         } else {
-          document.getElementById('message').textContent = 'No built.at message found.';
+          document.getElementById('message').textContent = 'No message found.';
         }
       } catch (err) {
         console.error(err);
@@ -102,7 +119,6 @@
       const input = document.getElementById('domainInput').value.trim();
       if (input) {
         fetchDomainMessage(input);
-        // Update URL (optional)
         window.history.pushState({}, '', '/' + input);
       }
     }
@@ -110,8 +126,10 @@
     // Get domain from URL path (for /domain.com URLs)
     const pathDomain = window.location.pathname.slice(1);
     if (pathDomain) {
-      document.getElementById('domainInput').value = pathDomain;
-      fetchDomainMessage(pathDomain);
+      fetchDomainMessage(pathDomain); // fetch message, do NOT set input value
+    } else {
+      // Show homepage section only when path is root
+      document.getElementById('homepage-section').style.display = 'block';
     }
   </script>
 </body>
