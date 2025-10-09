@@ -18,6 +18,7 @@
       text-align: center;
       padding: 2rem;
     }
+
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
@@ -26,24 +27,8 @@
       cursor: pointer;
     }
 
-    /* Search container */
-    #search-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-      gap: 0.5rem;
-    }
-    #search-container input[type="text"] {
-      flex: 1 1 200px;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      min-width: 150px;
-    }
-    #search-container button {
+    /* Buttons shared style */
+    .btn {
       padding: 0.55rem 1rem;
       font-size: 1rem;
       border: none;
@@ -51,9 +36,31 @@
       background-color: #4a4a4a;
       color: white;
       cursor: pointer;
+      min-width: 100px;
     }
-    #search-container button:hover {
+
+    .btn:hover {
       background-color: #1e40af;
+    }
+
+    /* Search container */
+    #search-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.5rem;
+      flex-wrap: nowrap; /* prevent button wrapping */
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #search-container input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
     }
 
     #message {
@@ -65,11 +72,13 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       min-width: 250px;
     }
+
     #domain {
       margin-top: 1rem;
       font-weight: bold;
       font-size: 1.2rem;
     }
+
     #homepage-section {
       margin-top: 2rem;
       padding: 1.5rem;
@@ -77,28 +86,25 @@
       border-radius: 0.75rem;
       max-width: 400px;
     }
-    #homepage-section button {
-      margin-top: 1rem;
-      background-color: #4a4a4a;
-    }
   </style>
 </head>
 <body>
   <!-- Clicking built.at resets page -->
   <h1 onclick="resetPage()">built.at</h1>
 
+  <!-- Search -->
   <div id="search-container">
     <input type="text" id="domainInput" placeholder="Enter a domain" autofocus />
-    <button onclick="searchDomain()">Search</button>
+    <button class="btn" onclick="searchDomain()">Search</button>
   </div>
 
   <div id="domain"></div>
-  <div id="message"></div>
+  <div id="message">Enter a domain and click Search.</div>
 
   <!-- Homepage only section -->
   <div id="homepage-section" style="display:none;">
     <p>Simple, verified messages from your domain.</p>
-    <a href="/about"><button>Learn More</button></a>
+    <a href="/about"><button class="btn">Learn More</button></a>
   </div>
 
   <script>
@@ -129,16 +135,23 @@
     }
 
     function searchDomain() {
-      const input = document.getElementById('domainInput').value.trim();
-      if (input) {
-        fetchDomainMessage(input);
-        window.history.pushState({}, '', '/' + input);
+      const inputEl = document.getElementById('domainInput');
+      const domain = inputEl.value.trim();
+      if (domain) {
+        fetchDomainMessage(domain);
+        window.history.pushState({}, '', '/' + domain);
+
+        // Reset input and autofocus
+        inputEl.value = '';
+        inputEl.focus();
       }
     }
 
     function resetPage() {
+      const inputEl = document.getElementById('domainInput');
       window.location.href = '/';
-      document.getElementById('domainInput').value = '';
+      inputEl.value = '';
+      inputEl.focus();
       document.getElementById('domain').textContent = '';
       document.getElementById('message').textContent = 'Enter a domain and click Search.';
     }
@@ -150,12 +163,12 @@
       }
     });
 
-    // Get domain from URL path
+    // Show message for URL path (if visiting /domain.com)
     const pathDomain = window.location.pathname.slice(1);
     if (pathDomain) {
-      fetchDomainMessage(pathDomain); // fetch message, do NOT set input value
+      fetchDomainMessage(pathDomain);
     } else {
-      // Show homepage section only when path is root
+      // Show homepage section only on root
       document.getElementById('homepage-section').style.display = 'block';
     }
   </script>
