@@ -111,7 +111,7 @@
     async function fetchDomainMessage(domain) {
       try {
         document.getElementById('domain').textContent = domain;
-        document.getElementById('message').textContent = 'Fetching message...';
+        document.getElementById('message').textContent = ''; // Fetching message
 
         const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, {
           headers: { 'Accept': 'application/dns-json' }
