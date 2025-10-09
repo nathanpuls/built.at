@@ -67,10 +67,10 @@
     #message {
       margin-top: 1.5rem;
       font-size: 1.1rem;
-      background: white;
+      /*background: white
       padding: 1rem 1.5rem;
       border-radius: 0.75rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);*/
       min-width: 250px;
     }
 
@@ -81,19 +81,31 @@
     }
 
     #homepage-section {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      font-size: 1.5rem;
+      margin-top: 0rem;
+      padding: 0rem;
+      font-size: 1rem;
       /*border: 1px solid #4a4a4a;
       border-width: 2px;
       border-radius: 0.75rem;
       max-width: 400px;*/
+    }
+    
+    a {
+      color: black;
+      font-size:1rem;
+      font-weight:bold;
     }
   </style>
 </head>
 <body>
   <!-- Clicking built.at resets page -->
   <h1 onclick="resetPage()">✔️built.at</h1>
+
+   <!-- Homepage only section -->
+  <div id="homepage-section">
+    <p>Simple, verified messages from your domain ->
+    <a href="/about">Learn More</a></p>
+  </div>
 
   <!-- Search -->
   <div id="search-container">
@@ -104,11 +116,7 @@
   <div id="domain"></div>
   <div id="message"></div>
 
-  <!-- Homepage only section -->
-  <div id="homepage-section" style="display:none;">
-    <p>Simple, verified messages from your domain.</p>
-    <a href="/about"><button class="btn">Learn More</button></a>
-  </div>
+ 
 
   <script>
     async function fetchDomainMessage(domain) {
