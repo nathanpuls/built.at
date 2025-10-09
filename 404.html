@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,25 +9,60 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       min-height: 100vh;
       margin: 0;
       background: #f9fafb;
       color: #111;
       text-align: center;
+      padding: 2rem;
     }
+
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
       margin-bottom: 1rem;
       color: #111827;
+      cursor: pointer;
     }
-    h2 {
-      font-size: 1.25rem;
-      color: #374151;
-      margin-top: 0;
+
+    /* Buttons shared style */
+    .btn {
+      padding: 0.55rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #4a4a4a;
+      color: white;
+      cursor: pointer;
+      min-width: 100px;
     }
+
+    .btn:hover {
+      background-color: #4a4a4a;
+    }
+
+    /* Search container */
+    #search-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.5rem;
+      flex-wrap: nowrap; /* prevent button wrapping */
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #search-container input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
     #message {
       margin-top: 1.5rem;
       font-size: 1.1rem;
@@ -38,23 +72,54 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       min-width: 250px;
     }
+
+    #domain {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    #homepage-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px solid #4a4a4a;
+      border-width: 2px;
+      border-radius: 0.75rem;
+      max-width: 400px;
+    }
   </style>
 </head>
 <body>
-  <h1>built.at</h1>
-  <h2 id="domain">Loading...</h2>
-  <div id="message">Fetching message...</div>
+  <!-- Clicking built.at resets page -->
+  <h1 onclick="resetPage()">built.at</h1>
+
+  <!-- Search -->
+  <div id="search-container">
+    <input type="text" id="domainInput" placeholder="Enter a domain" autofocus />
+    <button class="btn" onclick="searchDomain()">Search</button>
+  </div>
+
+  <div id="domain"></div>
+  <div id="message"></div>
+
+  <!-- Homepage only section -->
+  <div id="homepage-section" style="display:none;">
+    <p>Simple, verified messages from your domain.</p>
+    <a href="/about"><button class="btn">Learn More</button></a>
+  </div>
 
   <script>
     async function fetchDomainMessage(domain) {
       try {
+        document.getElementById('domain').textContent = domain;
+        document.getElementById('message').textContent = ''; // Fetching message
+
         const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, {
           headers: { 'Accept': 'application/dns-json' }
         });
         const data = await resp.json();
         const txtRecords = data.Answer || [];
 
-        // Find all TXT records with built.at=
         const messages = txtRecords
           .filter(r => r.data.includes('built.at='))
           .map(r => r.data.replace(/"/g,'').replace('built.at=','').trim());
@@ -62,7 +127,7 @@
         if (messages.length > 0) {
           document.getElementById('message').innerHTML = messages.join('<br>');
         } else {
-          document.getElementById('message').textContent = 'No built.at message found.';
+          document.getElementById('message').textContent = ''; // No message found
         }
       } catch (err) {
         console.error(err);
@@ -70,12 +135,43 @@
       }
     }
 
-    // Extract domain from URL path (e.g., builtat.github.io/website.com)
-    const path = window.location.pathname;
-    const domain = path.slice(1) || 'wyr.es';
-    document.getElementById('domain').textContent = domain;
+    function searchDomain() {
+      const inputEl = document.getElementById('domainInput');
+      const domain = inputEl.value.trim();
+      if (domain) {
+        fetchDomainMessage(domain);
+        window.history.pushState({}, '', '/' + domain);
 
-    fetchDomainMessage(domain);
+        // Reset input and autofocus
+        inputEl.value = '';
+        inputEl.focus();
+      }
+    }
+
+    function resetPage() {
+      const inputEl = document.getElementById('domainInput');
+      window.location.href = '/';
+      inputEl.value = '';
+      inputEl.focus();
+      document.getElementById('domain').textContent = '';
+      document.getElementById('message').textContent = '';
+    }
+
+    // Trigger search on Enter key
+    document.getElementById('domainInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        searchDomain();
+      }
+    });
+
+    // Show message for URL path (if visiting /domain.com)
+    const pathDomain = window.location.pathname.slice(1);
+    if (pathDomain) {
+      fetchDomainMessage(pathDomain);
+    } else {
+      // Show homepage section only on root
+      document.getElementById('homepage-section').style.display = 'block';
+    }
   </script>
 </body>
 </html>
