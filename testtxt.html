@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>built.at</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f9fafb;
+      color: #111;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+    input[type="text"] {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      width: 250px;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      margin-right: 0.5rem;
+    }
+    button {
+      padding: 0.55rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e40af;
+    }
+    #message {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      min-width: 250px;
+    }
+    #domain {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>built.at</h1>
+
+  <div>
+    <input type="text" id="domainInput" placeholder="Enter domain (e.g., wyr.es)" />
+    <button onclick="searchDomain()">Search</button>
+  </div>
+
+  <div id="domain"></div>
+  <div id="message">Enter a domain and click Search.</div>
+
+  <script>
+    async function fetchDomainMessage(domain) {
+      try {
+        document.getElementById('domain').textContent = domain;
+        document.getElementById('message').textContent = 'Fetching message...';
+
+        const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, {
+          headers: { 'Accept': 'application/dns-json' }
+        });
+        const data = await resp.json();
+        const txtRecords = data.Answer || [];
+
+        const messages = txtRecords
+          .filter(r => r.data.includes('built.at='))
+          .map(r => r.data.replace(/"/g,'').replace('built.at=','').trim());
+
+        if (messages.length > 0) {
+          document.getElementById('message').innerHTML = messages.join('<br>');
+        } else {
+          document.getElementById('message').textContent = 'No built.at message found.';
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('message').textContent = 'Error fetching message.';
+      }
+    }
+
+    function searchDomain() {
+      const input = document.getElementById('domainInput').value.trim();
+      if (input) {
+        fetchDomainMessage(input);
+        // Update URL (optional)
+        window.history.pushState({}, '', '/' + input);
+      }
+    }
+
+    // Get domain from URL path (for /domain.com URLs)
+    const pathDomain = window.location.pathname.slice(1);
+    if (pathDomain) {
+      document.getElementById('domainInput').value = pathDomain;
+      fetchDomainMessage(pathDomain);
+    }
+  </script>
+</body>
+</html>
