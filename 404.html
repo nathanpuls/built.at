@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>✔️built.at</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f9fafb;
+      color: #111;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: #111827; cursor:pointer; }
+    .btn { padding: .55rem 1rem; font-size:1rem; border:none; border-radius:.5rem; background:#4a4a4a; color:#fff; cursor:pointer; min-width:100px;}
+    .btn:hover { background:#333; }
+    #search-container { display:flex; gap:.5rem; width:100%; max-width:420px; }
+    #search-container input { flex:1; padding:.5rem 1rem; font-size:1rem; border-radius:.5rem; border:1px solid #ccc; }
+    #message { margin-top:1.25rem; font-size:1.05rem; min-height:1.2em; }
+    code { background:#eef2ff; padding:.1rem .3rem; border-radius:.25rem; }
+  </style>
+</head>
+<body>
+  <h1 onclick="location.href='/'">✔️built.at</h1>
+
+  <div id="search-container">
+    <input id="domainInput" placeholder="Enter a domain (e.g. example or example.com)" autofocus />
+    <button class="btn" onclick="searchDomain()">Go</button>
+  </div>
+
+  <div id="message"></div>
+
+<script>
+  // Helper: show status to user
+  function show(msg) {
+    document.getElementById('message').textContent = msg || '';
+  }
+
+  // Parse TXT results robustly and return first built.at value found (or null)
+  function findBuiltAtInTxtAnswers(txtAnswers) {
+    // txtAnswers is array of strings like: "\"v=spf1\" \"built.at=https://example.com/path\""
+    // We'll combine all data segments into one string after removing quotes.
+    const combined = txtAnswers
+      .map(s => String(s).replace(/"/g, ' ')) // remove quotes (turn them into spaces)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // Search for built.at= followed by any sequence that's not whitespace or quote
+    const re = /(?:^|\s|;)built\.at=([^\s"']+)/i;
+    const m = combined.match(re);
+    return m ? m[1] : null;
+  }
+
+  // Main lookup + redirect
+  async function lookupRedirect(domain, { showStatus = true } = {}) {
+    try {
+      if (!domain) return;
+      if (!domain.includes('.')) domain = domain + '.com'; // default to .com when no TLD
+
+      if (showStatus) show('Looking up TXT records for ' + domain + ' …');
+
+      const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=TXT`, {
+        headers: { 'Accept': 'application/dns-json' }
+      });
+
+      if (!resp.ok) {
+        if (showStatus) show('DNS lookup failed: ' + resp.status);
+        return;
+      }
+
+      const data = await resp.json();
+      const answers = Array.isArray(data.Answer) ? data.Answer : [];
+
+      // Extract the raw TXT strings from answers (the "data" field usually contains quoted parts)
+      const txtStrings = answers
+        .filter(a => a && typeof a.data === 'string')
+        .map(a => a.data);
+
+      const builtValue = findBuiltAtInTxtAnswers(txtStrings);
+
+      if (!builtValue) {
+        if (showStatus) show('No built.at TXT value found for ' + domain);
+        return;
+      }
+
+      // Normalize the value to a URL. If it's not a full URL, prefix https://
+      let target = builtValue.trim();
+
+      // If it's of the form example.com (no protocol), add https://
+      if (!/^https?:\/\//i.test(target)) {
+        target = 'https://' + target;
+      }
+
+      // Optional: basic URL validation
+      try {
+        new URL(target); // will throw if invalid
+      } catch (err) {
+        if (showStatus) show('Found built.at value but it is not a valid URL: ' + builtValue);
+        return;
+      }
+
+      // Show tiny status then redirect
+      if (showStatus) {
+        show('Redirecting to ' + target + ' …');
+        // small visual delay to let user see the message; remove if you want instant redirect
+        setTimeout(() => { location.href = target; }, 200);
+      } else {
+        location.href = target;
+      }
+    } catch (err) {
+      console.error(err);
+      show('Error fetching DNS TXT record.');
+    }
+  }
+
+  function searchDomain() {
+    const input = document.getElementById('domainInput');
+    let domain = input.value.trim();
+    if (!domain) return;
+    // push path so user can share the URL
+    try { history.pushState({}, '', '/' + domain); } catch(e) {}
+    lookupRedirect(domain, { showStatus: true });
+  }
+
+  // allow Enter to trigger search
+  document.getElementById('domainInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') searchDomain();
+  });
+
+  // If visiting built.at/<path>, auto-run lookup and redirect (no status shown)
+  (function autoFromPath() {
+    const path = location.pathname.replace(/^\/+/, ''); // remove leading slashes
+    if (!path) {
+      show('Enter a domain name above or visit ' + location.origin + '/example');
+      return;
+    }
+    // If path looks like a folder (contains /), only use the first segment
+    const first = path.split('/')[0];
+    // Keep the input populated for UX
+    document.getElementById('domainInput').value = first;
+    lookupRedirect(first, { showStatus: true });
+  })();
+</script>
+</body>
+</html>
