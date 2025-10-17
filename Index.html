@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✔️built.at</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f9fafb;
+      color: #111;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #111827;
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 0.55rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #4a4a4a;
+      color: white;
+      cursor: pointer;
+      min-width: 100px;
+    }
+
+    .btn:hover {
+      background-color: #333;
+    }
+
+    #search-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #search-container input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    #message {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    a {
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1 onclick="window.location='/'">✔️built.at</h1>
+
+  <div id="search-container">
+    <input type="text" id="domainInput" placeholder="Enter a domain (e.g. example or example.com)" autofocus />
+    <button class="btn" onclick="searchDomain()">Go</button>
+  </div>
+
+  <div id="message"></div>
+
+  <script>
+    async function lookupRedirect(domain, showMessage = true) {
+      try {
+        if (!domain.includes('.')) domain += '.com'; // default to .com
+
+        const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, {
+          headers: { 'Accept': 'application/dns-json' }
+        });
+        const data = await resp.json();
+        const txtRecords = data.Answer || [];
+
+        const builtRecord = txtRecords
+          .map(r => r.data.replace(/"/g, '').trim())
+          .find(t => t.startsWith('built.at='));
+
+        if (builtRecord) {
+          const url = builtRecord.replace('built.at=', '').trim();
+          const finalUrl = url.startsWith('http://') || url.startsWith('https://')
+            ? url
+            : 'https://' + url;
+          window.location.href = finalUrl;
+        } else if (showMessage) {
+          document.getElementById('message').textContent = `No built.at redirect found for ${domain}`;
+        }
+      } catch (err) {
+        console.error(err);
+        if (showMessage) {
+          document.getElementById('message').textContent = 'Error fetching redirect.';
+        }
+      }
+    }
+
+    function searchDomain() {
+      const inputEl = document.getElementById('domainInput');
+      let domain = inputEl.value.trim();
+      if (!domain) return;
+
+      window.history.pushState({}, '', '/' + domain);
+      lookupRedirect(domain);
+    }
+
+    // Trigger search on Enter key
+    document.getElementById('domainInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') searchDomain();
+    });
+
+    // Auto-redirect if visiting built.at/something
+    const pathDomain = window.location.pathname.slice(1);
+    if (pathDomain) {
+      lookupRedirect(pathDomain, false);
+    } else {
+      document.getElementById('message').innerHTML =
+        `<p>Enter a domain name above or visit <a href="/example">built.at/example</a></p>`;
+    }
+  </script>
+</body>
+</html>
