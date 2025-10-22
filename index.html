@@ -1,333 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>built.at - Verified Links from Your Website</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
-
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sheet Links</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
     html {
-  scroll-behavior: smooth;
-}
+      font-size: 30px;
+    }
 
     body {
+      font-family: 'Poppins', sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 20px;
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      color: #fff;
-      scroll-behavior: smooth;
+      font-weight: 200;
     }
 
-    h1, h2, h3 {
-      margin: 0;
-    }
-
-    /* Header / Navbar */
-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px; /* give more horizontal padding */
-  background-color: rgba(17, 24, 39, 0.9);
-  z-index: 1000;
-  backdrop-filter: blur(6px);
-}
-
-    header img.logo {
-      height: 40px;
-    }
-
- header nav {
-  display: flex;
-  flex-wrap: wrap; /* allow links to wrap if needed */
-  gap: 25px; /* space between links */
-}
-
-    header nav a:hover {
-      color: #a855f7;
-    }
-
-    /* Hero Section */
-    .hero {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      background: linear-gradient(135deg, #4f46e5, #a855f7, #ec4899);
-      padding: 0 20px;
-      padding-top: 80px; /* offset for fixed header */
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      max-width: 600px;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-
-    .hero button {
-      background-color: #fff;
-      color: #7c3aed;
-      font-weight: 600;
-      padding: 0.75rem 2rem;
-      border: none;
-      border-radius: 9999px;
-      font-size: 1.125rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .hero button:hover {
-      background-color: #f3f4f6;
-    }
-
-    /* Sections */
-    section {
-      padding: 80px 20px;
-      text-align: center;
-    }
-
-    .how-it-works {
-      background-color: #003152;
-      color: #fff;
-    }
-
-    .how-it-works h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .how-it-works p {
-      max-width: 700px;
-      margin: 0 auto 3rem auto;
-      font-size: 1.125rem;
-      line-height: 1.6;
-    }
-
-    .cards {
+    .content {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      margin: 0 auto;
+      gap: 6px;
     }
 
-    .card {
-      background-color: #1f2937;
-      padding: 20px;
-      border-radius: 20px;
-      max-width: 300px;
-      flex: 1;
-      box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-    }
-
-    .card h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .card p {
-      font-size: 1rem;
-      color: #d1d5db;
-    }
-
-    .card code {
-      background-color: #374151;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-family: monospace;
-    }
-
-    /* Example Section */
-    .example {
-      background: linear-gradient(to right, #3b82f6, #06b6d4);
-    }
-
-    .example h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .example p {
-      font-size: 1.125rem;
-      max-width: 600px;
-      margin: 0 auto 2rem auto;
-    }
-
-    .example .link {
-      display: inline-block;
-      background-color: #fff;
-      color: #111827;
-      padding: 0.75rem 1.5rem;
-      border-radius: 15px;
-      /* font-family: monospace; */
-      font-weight: 600;
-      transition: transform 0.2s ease;
+    a {
+      color: black;
       text-decoration: none;
+      padding: 2px 6px;
+      background: rgba(0, 150, 255, 0.07);
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.2s ease;
     }
 
-    .example .link:hover {
-      transform: scale(1.05);
+    a:focus, a:active {
+      outline: none;
+      background: rgba(0, 150, 255, 0.07);
     }
 
-    /* Footer */
-    footer {
-      background-color: #111827;
-      padding: 20px;
-      color: #9ca3af;
-      font-size: 0.875rem;
-      text-align: center;
+    a:visited {
+      color: inherit;
+      background: rgba(0, 150, 255, 0.07);
     }
 
-    .site-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 4rem; /* even bigger than your h1 */
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  color: #fff;
-  text-transform: lowercase;
-  line-height: 1;
-}
-
-@media (max-width: 768px) {
-  .site-title {
-    font-size: 4rem; /* responsive for tablets */
-  }
-}
-
-@media (max-width: 480px) {
-  .site-title {
-    font-size: 3rem; /* responsive for mobile */
-  }
-}
-
-.highlight {
-  font-weight: 700;
-  font-size: 1.2em;
-  color: #06b6d4; /* teal/cyan for contrast */
-}
-
-a {
-    color: #ffffff;
-}
-
-.cloudflare-orange {
-  color: #F48120;
-  font-size: 1.2em;
-  font-weight: 700;
-}
-
-.dns-links-vertical a {
-  display: block;           /* stacked vertically */
-  margin-bottom: 15px;      /* more spacing between links */
-  text-decoration: underline;
-  color: #fff;              /* change as needed */
-  font-weight: 500;
- 
-}
-
-
-
-
+    @media (max-width: 600px) {
+      html {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="content" id="main"></div>
 
-  <!-- Header with logo -->
-  <header>
-    <img src="ba-logo.jpeg" alt="built.at logo" class="logo">
-    <nav>
-      
-      
-    </nav>
-  </header>
+  <script>
+    // Get 'sheet' URL parameter from the query string, or use the default if not provided
+    const urlParams = new URLSearchParams(window.location.search);
+    const sheetURL = urlParams.get('sheet') || "https://docs.google.com/spreadsheets/d/e/2PACX-1vQRRT31nhYVVu1nZ1eYndxWfLzp_E2KjtL7qonp2OtGJxi69RQHecRG6B8K4QnJL0fx2gFyXsnv1Q5M/pub?output=csv";
 
-  <!-- Hero Section -->
-  <section class="hero" id="get-started">
-    <h0 class="site-title">built.at/your-brand</h0>
-    <h1>A simple, verified link from your website</h1>
-    <p>You already own your site — this just extends it. Built.at lets you publish a verified link straight from your domain name using nothing but a DNS TXT record. No hosting. No database. If you own the domain, you own the link.</p>
-     <a href="#how-it-works">
-    <button>Learn More</button>
-  </a>
-  </section>
+    // Define the color map, with "Gray" now being a lighter gray (#f0f0f0)
+    const colorMap = {
+      "Red":    { bg: "#ffe5e5", text: "#000" },
+      "Orange": { bg: "#ffeacc", text: "#000" },
+      "Yellow": { bg: "#fff9cc", text: "#000" },
+      "Green":  { bg: "#e6ffe6", text: "#000" },
+      "Blue":   { bg: "#e6f7ff", text: "#000" },
+      "Indigo": { bg: "#e6e6ff", text: "#000" },
+      "Violet": { bg: "#f5e6ff", text: "#000" },
+      "White":  { bg: "#ffffff", text: "#000" },
+      "Black":  { bg: "#000000", text: "#fff" },
+      "Gray":   { bg: "#f0f0f0", text: "#000" }  // Lighter gray background with black text
+    };
 
-  <!-- How It Works Section -->
-  <section class="how-it-works" id="how-it-works">
-    <h2>How It Works</h2>
-    <p>Add one line to your DNS, and you’ve got a trusted, branded link that points <span class="highlight">anywhere</span> (like your social media, link page, documentation, or any other related resource).</p>
-    <div class="cards">
-      <div class="card">
-        <h3>1. Log in to your domain provider</h3>
-        
-        <p>Where your website is hosted</p>
- 
-        <div class="dns-links-vertical">
-  <a href="https://dash.cloudflare.com/login" target="_blank">Cloudflare</a>
-  <a href="https://login.squarespace.com/" target="_blank">SquareSpace</a>
-  <a href="https://sso.godaddy.com/" target="_blank">GoDaddy</a>
-  <a href="https://www.namecheap.com/myaccount/login/" target="_blank">NameCheap</a>
-  <a href="https://www.bluehost.com/my-account/login" target="_blank">BlueHost</a>
-</div>
+    fetch(sheetURL)
+      .then(response => response.text())
+      .then(csv => {
+        const rows = csv.trim().split('\n').map(r => r.split(','));
+        const headers = rows[0].map(h => h.trim().toLowerCase());
+        const linkLabelIndex = headers.indexOf("link label");
+        const linkUrlIndex = headers.indexOf("link url");
+        const colorIndex = headers.indexOf("color");
+        const container = document.getElementById('main');
 
+        rows.slice(1).forEach(row => {
+          const label = row[linkLabelIndex]?.trim();
+          let url = row[linkUrlIndex]?.trim();
+          const colorName = row[colorIndex]?.trim(); // Color from the sheet (e.g., Gray, Black, etc.)
 
+          // Skip rows where either the label or the URL is missing
+          if (!label || !url) return;
 
-        
-        
+          // Default to Google search if no URL is provided
+          if (!url) {
+            url = `https://www.google.com/search?q=${encodeURIComponent(label)}`;
+          } else if (!/^https?:\/\//i.test(url) && !/^mailto:|^tel:/i.test(url)) {
+            url = `https://${url}`;  // Ensure valid URL format
+          }
 
-        
-      </div>
-
-       <div class="card">
-       <h3>2. Open your DNS records</h3>
-        <p></p>
-      </div>
-      <div class="card">
-        <h3>3. Add a TXT record</h3>
-        <p>Use <code>@</code> as the host name</p>
-      </div>
-      <div class="card">
-        <h3>4. Set the value</h3>
-        <p>
-          <code>"built.at=<span class="highlight">anywhere</span>  LINK"</code><br>
-          Wherever you want your built.at link to point to. Use the full URL, include http(s), up to 255 characters. (Cloudflare adds quotes automatically)
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Example Section -->
-  <section class="example" id="example">
-    <h2>Link Formatting</h2>
-    <p>For any link <span style="font-family: monospace;">built.at/[domain]</span> if it’s a <code>.com</code>, you can skip the extension. Other domains must include it.</p>
-    <h2>Dot Com Example</h2>
-    <p>Extension not required, both formats work</p>
-    <a href="https://built.at/linksaw" class="link">built.at/linksaw</a>
-    <br> <br>
-    <a href="https://built.at/linksaw.com" class="link">built.at/linksaw.com</a>
-    <br> <br>
-    <h2>Non Dot Com Example</h2>
-    <p>Extension required</p>
-    <a href="https://built.at/built.at" class="link">built.at/built.at</a>
-   
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    built.at © 2025 — A simple, verified link from your website.
-  </footer>
-
+          const colorStyle = colorMap[colorName] || colorMap["Blue"]; // Default to Blue if no color is specified
+          
+          // Apply color from the color map to the label
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = "_blank";
+          a.textContent = label || url;
+          a.style.backgroundColor = colorStyle.bg;
+          a.style.color = colorStyle.text;
+          container.appendChild(a);
+        });
+      })
+      .catch(err => console.error("Error loading CSV data:", err));
+  </script>
 </body>
 </html>
