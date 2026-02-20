@@ -2,6 +2,19 @@
 let subdomains = [];
 let currentResults = [];
 
+// Check local storage for cached subdomains on startup
+const cachedData = localStorage.getItem('builtAtSubdomains');
+let hasCachedData = false;
+if (cachedData) {
+    try {
+        subdomains = JSON.parse(cachedData);
+        currentResults = [...subdomains];
+        hasCachedData = true;
+    } catch (e) {
+        console.error("Failed to parse cached subdomains");
+    }
+}
+
 const searchInput = document.getElementById('search-input');
 const clearSearchBtn = document.getElementById('clear-search');
 const shortcutHint = document.getElementById('shortcut-hint');
@@ -9,17 +22,28 @@ const subdomainList = document.getElementById('subdomain-list');
 const noResults = document.getElementById('no-results');
 const loading = document.getElementById('loading');
 
-// Fetch subdomains on load
+// Fetch subdomains from API
 async function fetchSubdomains() {
     try {
         const response = await fetch('/api/subdomains');
         const data = await response.json();
         if (data.subdomains) {
-            subdomains = data.subdomains;
-            renderSubdomains(); // re-render once loaded
+            // Check if data changed to avoid unnecessary re-renders
+            const newDataString = JSON.stringify(data.subdomains);
+            if (newDataString !== localStorage.getItem('builtAtSubdomains')) {
+                subdomains = data.subdomains;
+                localStorage.setItem('builtAtSubdomains', newDataString);
+                renderSubdomains(searchInput.value); // Re-render with current search
+            } else if (!hasCachedData) {
+                // If we didn't have cached data and it fetched for the first time, render it
+                renderSubdomains(searchInput.value);
+            }
         }
     } catch (e) {
         console.error("Failed to fetch subdomains:", e);
+    } finally {
+        // Ensure loading is hidden even if fetch fails, as long as we tried
+        loading.classList.add('hidden');
     }
 }
 fetchSubdomains();
@@ -39,8 +63,10 @@ function renderSubdomains(filter = '') {
     // Clear previous items
     subdomainList.innerHTML = '';
 
-    // Hide loading
-    loading.classList.add('hidden');
+    // Hide loading if we have cached data
+    if (hasCachedData) {
+        loading.classList.add('hidden');
+    }
 
     // Manage clear button vs shortcut hint
     if (query.length > 0) {
@@ -63,30 +89,29 @@ function renderSubdomains(filter = '') {
             li.tabIndex = -1;
             li.className = 'subdomain-item';
 
+            // Subdomain link container
             const a = document.createElement('a');
             a.className = 'subdomain-link';
             a.href = sub.url;
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'subdomain-name';
-            nameSpan.textContent = sub.name;
+            // Container for number and name on the left
+            const leftContainer = document.createElement('div');
+            leftContainer.className = 'subdomain-left-container';
 
-            a.appendChild(nameSpan);
-
-            // Render shortcut '1'-'9' for the first 9 results instead of URL
+            // Render shortcut '1'-'9' for the first 9 results
             if (index < 9) {
                 const shortcutSpan = document.createElement('span');
                 shortcutSpan.className = 'subdomain-shortcut';
-                shortcutSpan.textContent = `Cmd ${index + 1}`;
-
-                // Adjust text based on platform
-                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-                if (!isMac) {
-                    shortcutSpan.textContent = `Ctrl ${index + 1}`;
-                }
-
-                a.appendChild(shortcutSpan);
+                shortcutSpan.textContent = `${index + 1}`;
+                leftContainer.appendChild(shortcutSpan);
             }
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'subdomain-name';
+            nameSpan.textContent = sub.name;
+            leftContainer.appendChild(nameSpan);
+
+            a.appendChild(leftContainer);
 
             li.appendChild(a);
             subdomainList.appendChild(li);
@@ -94,8 +119,10 @@ function renderSubdomains(filter = '') {
     }
 }
 
-// Ensure the page renders the list on load
-renderSubdomains();
+// Ensure the page renders the list on load using whatever data is available
+if (hasCachedData) {
+    renderSubdomains();
+}
 
 // Event listener for the search bar
 searchInput.addEventListener('input', (e) => {
