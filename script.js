@@ -156,8 +156,8 @@ document.addEventListener('keydown', (e) => {
         searchInput.focus();
     }
 
-    // Optional: map Cmd/Ctrl + 1-9 to results
-    if (trigger && e.key >= '1' && e.key <= '9') {
+    // Map 1-9 to results directly (without Cmd/Ctrl)
+    if (e.key >= '1' && e.key <= '9' && !e.metaKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         const index = parseInt(e.key) - 1;
         if (currentResults[index]) {
